@@ -1,12 +1,12 @@
 #include <iostream>
-#include <sstream>
 #include <string>
 #include <cctype>
+
 using namespace std;
 
 bool isKeyword(string s)
 {
-    string keywords[] = {"int","float","double","char","if","else","while","for","return"};
+    string keywords[]={"int","float","double","char","if","else","while","for","return"};
     
     for(int i=0;i<9;i++)
         if(s==keywords[i])
@@ -17,8 +17,8 @@ bool isKeyword(string s)
 
 bool isOperator(char c)
 {
-    char ops[] = {'+','-','*','/','=','<','>'};
-    
+    char ops[]={'+','-','*','/','=','<','>'};
+
     for(int i=0;i<7;i++)
         if(c==ops[i])
         return true;
@@ -26,57 +26,76 @@ bool isOperator(char c)
     return false;
 }
 
-bool isNumber(string s)
+bool isSeparator(char c)
 {
-    for(int i=0;i<s.length();i++)
-        if(!isdigit(s[i]))
-        return false;
+    char sep[]={';','(',')','{','}',','};
 
-    return true;
-}
+    for(int i=0;i<6;i++)
+        if(c==sep[i])
+        return true;
 
-bool isIdentifier(string s)
-{
-    if(!(isalpha(s[0]) || s[0]=='_'))
     return false;
-
-    for(int i=1;i<s.length();i++)
-        if(!(isalnum(s[i]) || s[i]=='_'))
-        return false;
-
-    return true;
 }
 
 int main()
 {
-    string line, token;
+    string line;
 
     cout<<"Enter statement: ";
     getline(cin,line);
 
-    stringstream ss(line);
-
-    while(ss >> token)
+    for(int i=0;i<line.length();)
     {
-        if(isKeyword(token))
-            cout<<token<<" : Keyword"<<endl;
+        if(isalpha(line[i]) || line[i]=='_')
+        {
+            string word="";
 
-        else if(isNumber(token))
-            cout<<token<<" : Number"<<endl;
+            while(i<line.length() && (isalnum(line[i]) || line[i]=='_'))
+            {
+                word+=line[i];
+                i++;
+            }
 
-        else if(isIdentifier(token))
-            cout<<token<<" : Identifier"<<endl;
+            if(isKeyword(word))
+                cout<<word<<" : Keyword"<<endl;
+            else
+                cout<<word<<" : Identifier"<<endl;
+        }
+
+        else if(isdigit(line[i]))
+        {
+            string num="";
+
+            while(i<line.length() && isdigit(line[i]))
+            {
+                num+=line[i];
+                i++;
+            }
+
+            cout<<num<<" : Number"<<endl;
+        }
+
+        else if(isOperator(line[i]))
+        {
+            cout<<line[i]<<" : Operator"<<endl;
+            i++;
+        }
+
+        else if(isSeparator(line[i]))
+        {
+            cout<<line[i]<<" : Separator"<<endl;
+            i++;
+        }
+
+        else if(isspace(line[i]))
+        {
+            i++;
+        }
 
         else
-            cout<<token<<" : Unknown"<<endl;
-    }
-
-    for(char c : line)
-    {
-        if(isOperator(c))
-        cout<<c<<" : Operator"<<endl;
-
-        if(c==';' || c=='(' || c==')')
-        cout<<c<<" : Separator"<<endl;
+        {
+            cout<<line[i]<<" : Invalid Symbol"<<endl;
+            i++;
+        }
     }
 }
